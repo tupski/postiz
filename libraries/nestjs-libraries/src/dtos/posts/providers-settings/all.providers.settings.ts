@@ -65,6 +65,7 @@ export const allProviders = (setEmpty?: any) => {
     { value: WordpressDto, name: 'wordpress' },
     { value: HashnodeSettingsDto, name: 'hashnode' },
     { value: setEmpty, name: 'facebook' },
+    { value: setEmpty, name: 'facebook-groups' },
     { value: setEmpty, name: 'threads' },
     { value: setEmpty, name: 'mastodon' },
     { value: setEmpty, name: 'bluesky' },
