@@ -552,6 +552,15 @@ export class IntegrationsController {
     return this._integrationService.saveFacebook(org.id, id, body.page);
   }
 
+  @Post('/facebook-groups/:id')
+  async saveFacebookGroups(
+    @Param('id') id: string,
+    @Body() body: { group: string },
+    @GetOrgFromRequest() org: Organization
+  ) {
+    return this._integrationService.saveFacebookGroups(org.id, id, body.group);
+  }
+
   @Post('/linkedin-page/:id')
   async saveLinkedin(
     @Param('id') id: string,

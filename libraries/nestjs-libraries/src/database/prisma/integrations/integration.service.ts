@@ -3,6 +3,7 @@ import { IntegrationRepository } from '@gitroom/nestjs-libraries/database/prisma
 import { IntegrationManager } from '@gitroom/nestjs-libraries/integrations/integration.manager';
 import { InstagramProvider } from '@gitroom/nestjs-libraries/integrations/social/instagram.provider';
 import { FacebookProvider } from '@gitroom/nestjs-libraries/integrations/social/facebook.provider';
+import { FacebookGroupsProvider } from '@gitroom/nestjs-libraries/integrations/social/facebook-groups.provider';
 import {
   AnalyticsData,
   AuthTokenDetails,
@@ -362,6 +363,36 @@ export class IntegrationService {
       inBetweenSteps: false,
       token: getIntegrationInformation.access_token,
       profile: getIntegrationInformation.username,
+    });
+
+    return { success: true };
+  }
+
+  async saveFacebookGroups(org: string, id: string, group: string) {
+    const getIntegration = await this._integrationRepository.getIntegrationById(
+      org,
+      id
+    );
+    if (getIntegration && !getIntegration.inBetweenSteps) {
+      throw new HttpException('Invalid request', HttpStatus.BAD_REQUEST);
+    }
+
+    const facebookGroups = this._integrationManager.getSocialIntegration(
+      'facebook-groups'
+    ) as FacebookGroupsProvider;
+    const getIntegrationInformation = await facebookGroups.fetchGroupInformation(
+      getIntegration?.token!,
+      group
+    );
+
+    await this.checkForDeletedOnceAndUpdate(org, getIntegrationInformation.id);
+    await this._integrationRepository.updateIntegration(id, {
+      picture: getIntegrationInformation.picture,
+      internalId: getIntegrationInformation.id,
+      name: getIntegrationInformation.name,
+      inBetweenSteps: false,
+      token: getIntegration?.token!,
+      profile: getIntegrationInformation.name,
     });
 
     return { success: true };
